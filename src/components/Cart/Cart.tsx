@@ -11,22 +11,25 @@ import { register } from "./logic.helper";
 import { CartItem } from "./types";
 
 const Cart = () => {
+  // State variables for the cart items and modal visibility
   const [items, setItems] = useState<CartItem[] | null>();
-
   const [isOpen, setIsOpen] = useState(false);
 
+  // Give an explicit type to data from the data file
   const cardContent: CardContents = menu;
 
   const openModal = () => {
     setIsOpen(true);
   };
 
+  // Close the modal and clear the cart
   const closeModal = () => {
     setIsOpen(false);
     setItems(undefined);
     localStorage.removeItem("cart");
   };
 
+  // Load cart items from local storage on component mount
   useEffect(() => {
     const itemList = localStorage.getItem("cart")?.split(",");
     setItems(
@@ -36,11 +39,13 @@ const Cart = () => {
     );
   }, []);
 
+  // Remove an item from the cart
   const remove = (id: string) => {
     const newCart = items?.filter((item) => item.id !== id);
     register(setItems, newCart);
   };
 
+  // Increase the quantity of an item in the cart
   const add = (id: string) => {
     const newCart = items?.map((item) => {
       if (item.id === id) return { ...item, quantity: item.quantity + 1 };
@@ -49,6 +54,7 @@ const Cart = () => {
     register(setItems, newCart);
   };
 
+  // Decrease the quantity of an item in the cart and remove if quantity = 0
   const minus = (id: string) => {
     const newCart = items?.map((item) => {
       if (item.id === id && item.quantity > 0)
@@ -64,6 +70,7 @@ const Cart = () => {
 
   return (
     <div className="p-4 flex flex-col gap-2">
+      {/* Iterate to render cart items */}
       {items && items?.length > 0 ? (
         <div>
           {items?.map((currItem) => (
@@ -78,6 +85,7 @@ const Cart = () => {
                 height={170}
                 alt={`/${cardContent[Number(currItem.id)].name}`}
               />
+              {/* Display item details */}
               <div className="flex justify-between flex-col">
                 <div className="mt-4 flex justify-between">
                   <div className="font-bold">
@@ -87,11 +95,13 @@ const Cart = () => {
                     {cardContent[Number(currItem.id)].price}€
                   </div>
                 </div>
+                {/* Display item description if available */}
                 {cardContent[Number(currItem.id)]?.description && (
                   <div className="text-gray-500 italic text-xs">
                     {cardContent[Number(currItem.id)].description}
                   </div>
                 )}
+                {/* Buttons for item manipulation */}
                 <div className="flex items-center mt-4 justify-around">
                   <div className="text-lg" onClick={() => remove(currItem.id)}>
                     <FiTrash />
@@ -110,14 +120,16 @@ const Cart = () => {
               </div>
             </div>
           ))}
+          {/* Render order validation button */}
           {items.length > 0 && (
             <div>
               <ValidationButton text="Order" onClick={openModal} />
+              {/* Render modal if open */}
               {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50">
                   <div className="absolute bg-slate-50 rounded p-8">
                     <h2 className="text-xl font-bold mb-4">Success</h2>
-                    <p>Your order is send to the kitchen.</p>
+                    <p>Your order is sent to the kitchen.</p>
                     <button
                       className="mt-4 bg-orange-300 text-white font-bold py-2 px-4 rounded"
                       onClick={closeModal}
@@ -131,6 +143,7 @@ const Cart = () => {
           )}
         </div>
       ) : (
+        // Render message when cart is empty
         <div>Your cart is empty...</div>
       )}
     </div>

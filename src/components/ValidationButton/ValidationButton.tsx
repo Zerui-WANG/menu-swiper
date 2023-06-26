@@ -1,3 +1,4 @@
+// Validation Button a generic component reused multiple times
 const ValidationButton = ({
   className = "bg-orange-300 py-2 px-6 rounded-2xl drop-shadow-lg text-slate-50",
   onClick,
