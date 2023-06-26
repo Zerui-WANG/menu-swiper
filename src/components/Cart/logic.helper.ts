@@ -10,4 +10,8 @@ export const register = (
 ) => {
   setItems(newCart);
   localStorage.setItem("cart", formatToLocalStorage(newCart));
+  if (newCart?.length === 0) {
+    setItems(undefined);
+    localStorage.removeItem("cart");
+  }
 };
